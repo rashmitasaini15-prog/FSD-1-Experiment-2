@@ -1,0 +1,17 @@
+body {
+    font-family: Arial;
+    background-color: #eef2f3;
+    padding: 40px;
+}
+
+textarea {
+    width: 300px;
+    height: 120px;
+    padding: 8px;
+    font-size: 14px;
+}
+
+p {
+    margin-top: 5px;
+    font-size: 14px;
+}
