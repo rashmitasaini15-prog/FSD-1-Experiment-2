@@ -1,34 +1,38 @@
-const products = [
-  { name: "Laptop", price: 55000, category: "Electronics" },
-  { name: "Headphones", price: 2999, category: "Electronics" },
-  { name: "T-Shirt", price: 799, category: "Clothing" },
-  { name: "Jeans", price: 1999, category: "Clothing" }
-];
-const productContainer = document.getElementById("productContainer");
-const filterSelect = document.getElementById("categoryFilter");
-function displayProducts(filteredProducts) {
-  productContainer.innerHTML = ""; 
+const svg = document.getElementById("svgCanvas");
 
-  filteredProducts.forEach(product => {
-    const card = document.createElement("div");
-    card.classList.add("product-card");
+let drawing = false;
+let path;
+let d = "";
 
-    card.innerHTML = `
-      <h2>${product.name}</h2>
-      <p>₹ ${product.price.toFixed(2)}</p>
-      <p class="category">${product.category}</p>
-    `;
+svg.addEventListener("mousedown", (e) => {
+  drawing = true;
 
-    productContainer.appendChild(card);
-  });
-}
-displayProducts(products);
-filterSelect.addEventListener("change", () => {
-  const selected = filterSelect.value;
-  if (selected === "All") {
-    displayProducts(products);
-  } else {
-    const filtered = products.filter(p => p.category === selected);
-    displayProducts(filtered);
-  }
+  const pt = getSVGPoint(e);
+  d = `M ${pt.x} ${pt.y}`;
+
+  path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d);
+  path.setAttribute("stroke", "blue");
+  path.setAttribute("stroke-width", "2");
+  path.setAttribute("fill", "none");
+
+  svg.appendChild(path);
 });
+
+svg.addEventListener("mousemove", (e) => {
+  if (!drawing) return;
+
+  const pt = getSVGPoint(e);
+  d += ` L ${pt.x} ${pt.y}`;
+  path.setAttribute("d", d);
+});
+
+svg.addEventListener("mouseup", () => drawing = false);
+svg.addEventListener("mouseleave", () => drawing = false);
+
+function getSVGPoint(event) {
+  const pt = svg.createSVGPoint();
+  pt.x = event.clientX;
+  pt.y = event.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
